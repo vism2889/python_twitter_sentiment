@@ -1,7 +1,12 @@
 # python_twitter_sentiment
 
-First 'working' sentiment grabber I've made with python.
+First 'working' sentiment grabber I've made with python.  (I know... like you haven't seen one of these already...)
 
+Hoping to go all out with this in my free time over the next couple of months,
+currently basing the functionality around "grabbing" data but also aim to 
+come up with interesting ways to "respond" and interact with the data.
+
+**** 
 - The program grabs tweets from a specific twitter handle based on user
   determined keywords.
 - Resulting data from the tweet grab gets run through a basic tokenization
