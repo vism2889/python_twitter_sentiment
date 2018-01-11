@@ -1,5 +1,5 @@
 '''
-File Name: sentiment_app.py
+File Name: tweet_sentiment.py
 Author: Morgan Visnesky
 Date: 01/02/2018
 
@@ -8,11 +8,15 @@ Description:
 Application to use sentiment analysis on user determined tweets then store resulting
 data in SQLite database.
 
-should have function for the following:
--Getting tweets
--analyzing tweets
--adding new tweets and related data into database
--possibly add visualization
+Planned Improvements:
+
+    - tweet_cleaner() function, see example below
+    - ext_link_parser() function to follow link, parse webpage
+        - find way to save/ compress parsed data as accessible file format
+        -
+    - save date to db with tweet
+    - break __main__ up into smaller reusable functions
+
 '''
 import re
 import sqlite3
@@ -20,6 +24,9 @@ import tweepy
 import json
 #import sentiment
 from textblob import TextBlob as tb
+
+
+# make demo file showing how to store auth, and token in seperate file
 from morgstwtkey import auth, token
 auth #OAuth
 token #Access token
@@ -29,6 +36,22 @@ api = tweepy.API(auth)
 
 
 #create a tweet cleaning function to pass tweets through before the get_sentiment function
+'''
+def tweet_cleaner(tweet):
+    - make sure textblob removes stopwords, if not do so.
+    - clean punctuation
+    - separate links from tweets if links exist
+    - return cleaned tweet, and list of weblinks
+'''
+
+'''
+def ext_link_parser(link):
+    - go to link and parse (maybe use beautifulSoup)
+    - return sentiment to a large body of text anywhere in the link that key words from the user are found
+    -
+
+'''
+
 def get_sentiment(tweet):
     sent_analysis = tb(tweet)
     SA = sent_analysis.sentiment.polarity
