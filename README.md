@@ -6,6 +6,11 @@ Hoping to go all out with this in my free time over the next couple of months,
 currently basing the functionality around "grabbing" data but also aim to 
 come up with interesting ways to "respond" and interact with the data.
 
+Requirements:
+- Python 3.5 or newer.
+- Active twitter account with API key.
+- [Tweepy](https://github.com/tweepy/tweepy)
+- [TextBlob](https://github.com/sloria/textblob)
 **** 
 - The program grabs tweets from a specific twitter handle based on user
   determined keywords.
@@ -27,3 +32,10 @@ Future Improvements:
 	- Compare by twitter handles
 	- Compare by keyword
 	
+Further Reading and Resources: (Some of these are for NLTK package,
+which isn't currently being used as of late.)
+- [noun-phrase extractor code](https://gist.github.com/shlomibabluki/5539628)
+- [noun-phrase extractor article](https://thetokenizer.com/2013/05/09/efficient-way-to-extract-the-main-topics-of-a-sentence/)
+- [twitter sentiment-analysis article series](https://towardsdatascience.com/another-twitter-sentiment-analysis-with-python-part-5-50b4e87d9bdd)
+- [intent/contextual semantic search article](https://towardsdatascience.com/sentiment-analysis-concept-analysis-and-applications-6c94d6f58c17)
+
