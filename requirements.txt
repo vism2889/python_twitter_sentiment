@@ -1,0 +1,3 @@
+Python>=3.5
+Tweepy>=3.4.0
+TextBlob>=0.14.0

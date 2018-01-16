@@ -36,27 +36,12 @@ TODO:
       just grab thier last 100 tweets by default.
     - display last used search terms in form of list (terms from last search session), allow selection of that
       as opposed to entering in new list of terms or defaulting to no search terms.
-
-This file is part of python_twitter_sentiment.
-
-python_twitter_sentiment is free software: you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free Software
-Foundation, either version 3 of the License, or (at your option) any later
-version.
-python_twitter_sentiment is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License along with
-this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 __author__ = "Morgan Visnesky"
 __contact__ = "morganticss@gmail.com"
 __date__ = "2018/01/02"
-__license__ = "GPLv3"
-__maintainer__ = "Morgan Visnesky"
-__status__ = "Developement"
-__version__ = "0.0.1"
+__license__ = "See LICENSE for details"
 
 
 import time
