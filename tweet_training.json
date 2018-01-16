@@ -1,0 +1,7 @@
+tweet trainng data for tweet_sentiment classifier, remove this after completing
+
+[
+    {"text": "I love this sandwich.", "label": "pos"},
+    {"text": "This is an amazing place!", "label": "pos"},
+    {"text": "I do not like this restaurant", "label": "neg"}
+]

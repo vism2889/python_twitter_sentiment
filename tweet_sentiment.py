@@ -23,12 +23,14 @@ number of relevant tweets stored in the database.
 TODO:
     ** add contextual semantic search
     ** add intent analysis
+    ** parts of speech tagging
+    ** use added .JSON files to build up training and test data for a
+       'from scratch' classifier with TextBlob (consider NLTK package)
+    ** use TextBlob functionality to build a custom feauture extracter (consider NLTK package)
+
 
     - tweet_cleaner() function, see example below
     (in_progress)- ext_link_parser() function to follow link, parse webpage
-    - save date to db with tweet (use tweet_created_at method with tweepy for tweet date and time)
-    * also store the current date of datetime of the tweet grab
-    - break __main__ up into smaller reusable functions
 
     - make it so it you dont want to enter any keywords and just return all tweets from a given user you can
       just grab thier last 100 tweets by default.
@@ -49,7 +51,6 @@ this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 __author__ = "Morgan Visnesky"
-__authors__ = ["One developer", "And another one", "etc"]
 __contact__ = "morganticss@gmail.com"
 __date__ = "2018/01/02"
 __license__ = "GPLv3"
@@ -58,6 +59,7 @@ __status__ = "Developement"
 __version__ = "0.0.1"
 
 
+import time
 import datetime
 import re
 import sqlite3
@@ -107,57 +109,77 @@ def get_user_keywords():
     kw = tb(keywords) #creates a textBlob object of user inputted comma-seperated list of keywords
     return kw.words.lower() # lowercase as a cleaning measure
 
-def __main__():
-    filename = 'twitter_sentiment_test.db'
-    conn = sqlite3.connect(filename)
-    cur = conn.cursor()
-    cur.execute('''CREATE TABLE IF NOT EXISTS twitter_sentiment(twitter_handle text,
-                                                                tweet text,
-                                                                keyword text,
-                                                                sentiment text,
-                                                                link_in_tweet text)''')
-
-    keywords = get_user_keywords()
-
-    twitter_name = input("Enter a Twitter Handle: ")
-    for name in twitter_name:
+def twitter_connect(twitt_handle):
+    for name in twitt_handle:
         try:
-            stuff = api.user_timeline(screen_name = twitter_name,
+            stuff = api.user_timeline(screen_name = twitt_handle,
                                     count = 100,
                                     include_rts = False,
                                     tweet_mode= 'extended')
             # tweet_mode = 'extended'  in addition status.full_text accurately grabs
             # entire tweet with t.co link at end
-
         except tweepy.TweepError as e:
-            twitter_name = input("The handle you entered was invalid, please try again: ")
-        catchcount = 0 # used to keep track of num of tweets returned
+            twitt_handle = input("The handle you entered was invalid, please try again: ")
+    return stuff
 
-    for status in stuff:
+def url_grabber(status):
+    # re.search + link grabber
+    url = ''
+    links = re.search("(?P<url>https?://[^\s]+)", status)
+    if links:
+        url = links.groups()
+        url = url[0]
+    return url
+
+def main():
+    filename = 'twitter_sentiment_test.db'
+    conn = sqlite3.connect(filename)
+    cur = conn.cursor()
+    cur.execute('''CREATE TABLE IF NOT EXISTS twitter_sentiment(
+                                            twitter_handle text, tweet text,
+                                            date_tweeted text, keyword text,
+                                            sentiment text, polarity text,
+                                            link_in_tweet text, search_date text
+                                            )''')
+
+    keywords = get_user_keywords()
+    twitter_name = input("Enter a Twitter Handle: ")
+    tweets = twitter_connect(twitter_name)
+    catchcount = 0 # used to keep track of num of tweets returned
+    linkcatch = 0 # used to keep track of num of tweets with links
+    '''
+    TODO: protect against adding duplicates into database
+    '''
+    #existing_tweets = cur.execute('SELECT * FROM twitter_sentiment ORDER BY tweet')
+    for status in tweets:
         for word in keywords:
             if word in status.full_text.lower(): # lowercase as cleaning measure for proper matching
+                searchdate = datetime.datetime.now().strftime("%y-%m-%d %H:%M") # Search / tweetgrab date
+                created = status.created_at # date and time actual status was posted on twitter
 
-                # re.search + link grabber
-                url = ''
-                links = re.search("(?P<url>https?://[^\s]+)", status.full_text)
-                if links:
-                    url = links.groups()
-                    url = url[0]
+                url = url_grabber(status.full_text)
+                if url:
+                    linkcatch += 1
                 # status passed to sentiment function
-                sent = get_sentiment(status.full_text.lower())
+                polar = get_sentiment(status.full_text.lower()) # string
+                sent = tb(status.full_text.lower())
+                sentval = sent.sentiment.polarity # gets num between -1 and 1
                 # data inserted in to corresponding DB columns
-                cur.execute("INSERT INTO twitter_sentiment VALUES (?,?,?,?,?)", (twitter_name, status.full_text, word, sent, str(url)))
+                cur.execute("INSERT INTO twitter_sentiment VALUES (?,?,?,?,?,?,?,?)",
+                                                    (twitter_name,
+                                                    status.full_text.lower(),
+                                                    created, word, str(sentval),
+                                                    polar, str(url),
+                                                    str(searchdate)))
                 catchcount += 1 # if keyword is in tweet and has been collected add 1 to catchcount
 
             else:
                 continue
-
-    '''
-    TODO: Return the number of links stored from current search with list of attached links
-    '''
-    print('\nThis search caught %d tweets' % catchcount)
-    print('Data was added to: %s \n' % filename)
+    print('\nThis search caught {} tweets'.format(catchcount))
+    print('{} of those tweets contained links.'.format(linkcatch))
+    print('Data was added to: {} \n'.format(filename))
 
     conn.commit()
     conn.close()
-__main__()
+if __name__ == '__main__':
+    main()
